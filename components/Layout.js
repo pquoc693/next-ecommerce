@@ -8,12 +8,22 @@ import "react-toastify/dist/ReactToastify.css";
 import { Menu } from "@headlessui/react";
 import { Store } from "../utils/Store";
 import DropdownLink from "./DropdownLink";
+import { useRouter } from "next/router";
+import { SearchIcon } from "@heroicons/react/outline";
 
 export default function Layout({ title, children }) {
   const { status, data: session } = useSession();
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [cartItemsCount, setCartItemsCount] = useState(0);
+
+  const [query, setQuery] = useState("");
+
+  const router = useRouter();
+  const submitHandler = (e) => {
+    e.preventDefault();
+    router.push(`/search?query=${query}`);
+  };
 
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
@@ -41,6 +51,24 @@ export default function Layout({ title, children }) {
             <Link href="/">
               <p className="text-lg font-bold">amazona</p>
             </Link>
+            <form
+              onSubmit={submitHandler}
+              className="mx-auto  hidden w-full justify-center md:flex"
+            >
+              <input
+                onChange={(e) => setQuery(e.target.value)}
+                type="text"
+                className="rounded-tr-none rounded-br-none p-1 text-sm   focus:ring-0"
+                placeholder="Search products"
+              />
+              <button
+                className="rounded rounded-tl-none rounded-bl-none bg-amber-300 p-1 text-sm dark:text-black"
+                type="submit"
+                id="button-addon2"
+              >
+                <SearchIcon className="h-5 w-5"></SearchIcon>
+              </button>
+            </form>
             <div>
               <Link href="/cart">
                 <span className="p-2">
